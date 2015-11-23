@@ -1,0 +1,13 @@
+name = GFF Exporter
+description = Provides a functionality to export a file in GFF format from data in drupal views.
+core = 7.x
+biomaterial = gff_exporter
+package = Tripal Extensions
+configure = admin/tripal/extension/gff_exporter
+
+version = 7.x-2.0-rc1
+dependencies[] = tripal_core
+dependencies[] = tripal_views
+dependencies[] = tripal_organism
+dependencies[] = tripal_cv
+dependencies[] = tripal_db

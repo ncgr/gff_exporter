@@ -1,0 +1,63 @@
+<?php
+/**
+ * Implements hook_install()
+ */
+
+function gff_exporter_install() {
+return 'installing module gff_exporter.....';
+}
+
+
+/**
+ * Implements hook_uninstall()
+ */
+function gff_exporter_uninstall() {
+return 'uninstalling module gff_exporter.....';
+}
+
+
+/**
+ * Implements hook_enable()
+ */
+
+function gff_exporter_enable(){
+return 'enabling module gff_exporter.....';
+$permissions = array('access gff_exporter content');
+gff_exporter_grant_permissions(DRUPAL_AUTHENTICATED_RID, $permissions);
+$permissions_anonym = array('access gff_exporter content');
+gff_exporter_grant_permissions(DRUPAL_ANONYMOUS_RID, $permissions_anonym);
+$permissions_admin = array('administer gff_exporter');
+gff_exporter_grant_permissions (DRUPAL_AUTHENTICATED_RID, $permissions_admin);
+}
+
+
+
+/**
+ * Implementation of hook_grant_permissions(). peu added
+ */
+
+function gff_exporter_grant_permissions($rid, array $permissions = array()) {
+
+   // this line doesn't work on install / enable hooks
+     $modules = user_permission_get_modules();
+    // Grant new permissions for the role.
+    foreach ($permissions as $name) {
+        db_merge('role_permission')
+        ->key(array(
+            'rid' => $rid,
+            'permission' => $name,
+        ))
+        ->fields(array(
+      //hard-coded module name here as $modules was not working -peu
+           'module' => 'gff_exporter',
+       ))
+        ->execute();
+    }
+
+
+    // Clear the user access cache.
+    drupal_static_reset('user_access');
+    drupal_static_reset('user_role_permissions');
+}
+
+

@@ -1,0 +1,38 @@
+<?php
+
+ /* PEU: create a path for viewing protein domains in gff format from the phylotree_consensus_id
+ /* 'page arguments' => array(1,2), */
+ 
+/*
+ * @{
+ * Integrates the Chado Phylotree module with Drupal Nodes
+ * @}
+ */
+require_once 'includes/gff_exporter.chado_node.inc';
+
+
+
+function gff_exporter_permission() {
+  return array(
+    'access gff_exporter content' => array(
+      'title' => t('View GFF Exporter'),
+      'description' => t('Allow users to view gff exporter pages.'),
+    ),
+    'administer gff_exporter' => array(
+      'title' => t('Administer GFF Exporter'),
+      'description' => t('Allow users to administer all gff exporter pages.'),
+    ),
+  );
+}
+  
+function gff_exporter_menu()
+{ 
+ $items['test_gff/%'] = array(
+  'title' => 'Testing GFF Exporter',
+    'page callback' => 'phylotree_domains',
+    'page arguments' => array(1),
+    'access callback' => TRUE, // allow all anonymous http clients
+   );
+return $items;
+}
+
