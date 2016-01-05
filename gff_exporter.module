@@ -27,7 +27,7 @@ function gff_exporter_permission() {
   
 function gff_exporter_menu()
 { 
- $items['test_gff/%'] = array(
+ $items['gff_export/%'] = array(
   'title' => 'Testing GFF Exporter',
     'page callback' => 'phylotree_domains',
     'page arguments' => array(1),
