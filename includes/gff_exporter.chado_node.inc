@@ -10,10 +10,15 @@ function phylotree_domains($phylo_cons_name)
 {
 
  $sql = <<<SQL
- SELECT f.name, floc.fmin+1 as fmin ,floc.fmax+1 as fmax, c.name as feature_type from feature f
+ SELECT f.name, floc.fmin+1 as fmin ,floc.fmax+1 as fmax, c.name as feature_type, af.significance as score, cdxt.name as fullname from feature f
         INNER JOIN cvterm c on f.type_id=c.cvterm_id
         INNER JOIN featureloc floc on f.feature_id=floc.feature_id
-        WHERE c.cvterm_id=(select cvterm_id from chado.cvterm where name='protein_hmm_match') AND floc.srcfeature_id IN (select feature_id from feature WHERE name = :phylo_cons_name)
+        INNER JOIN feature srcfeat on floc.srcfeature_id=srcfeat.feature_id
+        INNER JOIN analysisfeature af on f.feature_id=af.feature_id
+        LEFT OUTER JOIN dbxref dx on f.name=dx.accession
+        LEFT OUTER JOIN cvterm_dbxref cdx on dx.dbxref_id=cdx.dbxref_id
+        LEFT OUTER JOIN cvterm cdxt on cdxt.cvterm_id=cdx.cvterm_id
+        WHERE c.cvterm_id=(select cvterm_id from chado.cvterm where name='protein_hmm_match') AND srcfeat.name = :phylo_cons_name
 SQL;
 
 $args = array(':phylo_cons_name' => $phylo_cons_name);  
@@ -21,7 +26,7 @@ $result = chado_query($sql, $args);
 header('Content-Type: text/plain');
 foreach ($result as $r)
 {
-  echo "$phylo_cons_name\t.\t$r->feature_type\t$r->fmin\t$r->fmax\t.\t.\t.\tID=$r->name";
+  echo "$phylo_cons_name\t$r->feature_type\t$r->name\t$r->fmin\t$r->fmax\t$r->score\t.\t.\tID=$r->name;Note=$r->fullname";
   echo "\r\n";
 }
 }
